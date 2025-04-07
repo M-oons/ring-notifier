@@ -1,0 +1,22 @@
+{
+  "name": "ring-notifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "copyfiles -u 1 src/assets/* dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-notifier": "^10.0.1",
+    "ring-client-api": "^13.2.1",
+    "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/node-notifier": "^8.0.5",
+    "copyfiles": "^2.4.1"
+  }
+}
