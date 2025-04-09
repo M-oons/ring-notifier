@@ -1,4 +1,6 @@
+import { spawn } from "child_process";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { type } from "os";
 import { join } from "path";
 import { type RingCamera } from "ring-client-api";
 
@@ -34,22 +36,53 @@ export const appendFile = (path: string, content: string): void => {
     catch { }
 };
 
+export const openExplorer = (path: string): void => {
+    let command = "";
+    switch (type()) {
+        case "Windows_NT":
+            command = "explorer";
+            path ||= "=";
+            break;
+
+        case "Darwin":
+            command = "open";
+            path ||= "/";
+            break;
+
+        default:
+            return;
+    }
+
+    const p = spawn(command, [path]);
+    p.on("error", () => {
+        p.kill();
+    });
+};
+
 export const sleep = async (ms: number): Promise<void> => {
     await new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export const getDateForFolder = (): string => {
+export const getDateForFolder = (includeDay: boolean): string => {
     const now = new Date();
 
+    const year = now.getFullYear();
     const month = now.getMonth() + 1;
     const paddedMonth = month.toString().padStart(2, "0");
-    const year = now.getFullYear();
 
-    return `${year}-${paddedMonth}`;
+    let date = `${year}-${paddedMonth}`;
+
+    if (includeDay) {
+        const day = now.getDate();
+        const paddedDay = day.toString().padStart(2, "0");
+        date += `-${paddedDay}`;
+    }
+
+    return date;
 };
 
 const ensureLogsFolderExists = (): string => {
-    const logsPath = join(`${process.env.APPDATA}`, "Ring", "logs", getDateForFolder());
+    const logsPath = join(`${process.env.APPDATA}`, "Ring", "logs", getDateForFolder(false));
     if (!existsSync(logsPath))
         mkdirSync(logsPath, { recursive: true });
     return logsPath;
@@ -58,16 +91,16 @@ const ensureLogsFolderExists = (): string => {
 const getTimestamp = (): string => {
     const now = new Date();
 
-    const day = now.getDate();
-    const month = now.getMonth() + 1;
     const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
 
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
 
-    const paddedDay = day.toString().padStart(2, "0");
     const paddedMonth = month.toString().padStart(2, "0");
+    const paddedDay = day.toString().padStart(2, "0");
     const paddedHours = hours.toString().padStart(2, "0");
     const paddedMinutes = minutes.toString().padStart(2, "0");
     const paddedSeconds = seconds.toString().padStart(2, "0");
@@ -78,12 +111,12 @@ const getTimestamp = (): string => {
 const getTimestampForFile = (): string => {
     const now = new Date();
 
-    const day = now.getDate();
-    const month = now.getMonth() + 1;
     const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
 
-    const paddedDay = day.toString().padStart(2, "0");
     const paddedMonth = month.toString().padStart(2, "0");
+    const paddedDay = day.toString().padStart(2, "0");
 
     return `${year}-${paddedMonth}-${paddedDay}`;
 };

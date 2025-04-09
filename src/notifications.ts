@@ -15,7 +15,7 @@ export const notify = (camera: RingCamera, cameraEvent: CameraEvent, snapshotPat
                     appID: "Ring",
                     title: "👀 Motion detected",
                     message: `Motion detected at "${camera.name}"`,
-                    icon: snapshotPath || join(__dirname, "assets", "ring.png"),
+                    icon: snapshotPath || join(__dirname, "assets", "logo.png"),
                     sound: false,
                 });
             if (config.notifications.motion.sound)
@@ -28,7 +28,7 @@ export const notify = (camera: RingCamera, cameraEvent: CameraEvent, snapshotPat
                     appID: "Ring",
                     title: "🔔 Doorbell ring",
                     message: `Doorbell ring at "${camera.name}"`,
-                    icon: snapshotPath || join(__dirname, "assets", "ring.png"),
+                    icon: snapshotPath || join(__dirname, "assets", "logo.png"),
                     sound: false,
                 });
             if (config.notifications.ring.sound)

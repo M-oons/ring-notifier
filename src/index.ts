@@ -1,17 +1,58 @@
 import { join } from "path";
-import { existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, readFileSync } from "fs";
 
 const appPath = join(`${process.env.APPDATA}`, "Ring");
 if (!existsSync(appPath))
     mkdirSync(appPath, { recursive: true });
 
 import { RingApi } from "ring-client-api";
+import SysTray from "systray";
 import { readRefreshToken } from "./auth";
 import config from "./config";
 import { handleNotification, handleRefreshTokenUpdate } from "./handlers";
-import { log } from "./utils";
+import { log, openExplorer } from "./utils";
 
-(async () => {
+const tray = new SysTray({
+    menu: {
+        icon: readFileSync(join(__dirname, "assets", "icon.ico")).toString("base64"),
+        title: "Ring Notifier",
+        tooltip: "Ring Notifier",
+        items: [
+            {
+                title: "Ring Notifier",
+                tooltip: "Ring Notifier",
+                enabled: false,
+                checked: false,
+            },
+            {
+                title: "Open captures folder",
+                tooltip: "Open captures folder",
+                enabled: true,
+                checked: false,
+            },
+            {
+                title: "Quit",
+                tooltip: "Quit",
+                enabled: true,
+                checked: false,
+            }
+        ],
+    },
+});
+
+tray.onClick(action => {
+    switch (action.seq_id) {
+        case 1: // open captures folder
+            openExplorer(join(`${process.env.APPDATA}`, "Ring", "captures"));
+            return;
+
+        case 2: // quit
+            tray.kill();
+            return;
+    }
+});
+
+tray.onReady(async () => {
     const ring = new RingApi({
         refreshToken: readRefreshToken(),
         cameraStatusPollingSeconds: config.cameraPollingInterval,
@@ -34,4 +75,4 @@ import { log } from "./utils";
             camera.onNewNotification.subscribe(ding => handleNotification(camera, ding));
         }
     }
-})();
+});
