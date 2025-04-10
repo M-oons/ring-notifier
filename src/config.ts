@@ -1,6 +1,6 @@
 import { join } from "path";
 import { type Config } from "./types";
-import { readFile, writeFile } from "./utils";
+import { APP_PATH, readFile, writeFile } from "./utils";
 
 const defaultConfig: Config = {
     cameraPollingInterval: 2,
@@ -42,7 +42,7 @@ const parseConfig = (config: Config): Config => {
     };
 };
 
-const configPath = join(`${process.env.APPDATA}`, "Ring", "config.json");
+const configPath = join(APP_PATH, "config.json");
 
 let config: Config = defaultConfig;
 

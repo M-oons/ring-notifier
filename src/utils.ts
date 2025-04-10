@@ -4,6 +4,8 @@ import { type } from "os";
 import { join } from "path";
 import { type RingCamera } from "ring-client-api";
 
+export const APP_PATH = join(`${process.env.APPDATA}`, "ring-notifier");
+
 export const log = (text: string, ...camera: RingCamera[]): void => {
     let message = `${getTimestamp()} `;
     if (camera.length)
@@ -82,7 +84,7 @@ export const getDateForFolder = (includeDay: boolean): string => {
 };
 
 const ensureLogsFolderExists = (): string => {
-    const logsPath = join(`${process.env.APPDATA}`, "Ring", "logs", getDateForFolder(false));
+    const logsPath = join(APP_PATH, "logs", getDateForFolder(false));
     if (!existsSync(logsPath))
         mkdirSync(logsPath, { recursive: true });
     return logsPath;

@@ -1,9 +1,9 @@
 import { join } from "path";
 import { existsSync, mkdirSync, readFileSync } from "fs";
+import { APP_PATH } from "./utils";
 
-const appPath = join(`${process.env.APPDATA}`, "Ring");
-if (!existsSync(appPath))
-    mkdirSync(appPath, { recursive: true });
+if (!existsSync(APP_PATH))
+    mkdirSync(APP_PATH, { recursive: true });
 
 import { RingApi } from "ring-client-api";
 import SysTray from "systray";
@@ -43,7 +43,7 @@ const tray = new SysTray({
 tray.onClick(action => {
     switch (action.seq_id) {
         case 1: // open captures folder
-            openExplorer(join(`${process.env.APPDATA}`, "Ring", "captures"));
+            openExplorer(join(APP_PATH, "captures"));
             return;
 
         case 2: // quit

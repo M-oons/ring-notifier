@@ -1,9 +1,9 @@
 import { join } from "path";
 import { type Auth } from "./types";
-import { readFile, writeFile } from "./utils";
+import { APP_PATH, readFile, writeFile } from "./utils";
 
 export const readRefreshToken = (): string => {
-    const json = readFile(join(`${process.env.APPDATA}`, "Ring", "auth.json"));
+    const json = readFile(join(APP_PATH, "auth.json"));
     if (!json)
         return "";
 
@@ -14,5 +14,5 @@ export const readRefreshToken = (): string => {
 export const saveRefreshToken = (refreshToken: string): void => {
     const auth: Auth = { refreshToken };
     const json = JSON.stringify(auth, null, 4);
-    writeFile(join(`${process.env.APPDATA}`, "Ring", "auth.json"), json);
+    writeFile(join(APP_PATH, "auth.json"), json);
 };

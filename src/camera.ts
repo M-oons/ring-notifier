@@ -3,9 +3,9 @@ import { join } from "path";
 import { pipeline } from "stream/promises";
 import { type RingCamera } from "ring-client-api";
 import { type CameraEvent } from "./types";
-import { getDateForFolder, log, sleep, writeFile } from "./utils";
+import { APP_PATH, getDateForFolder, log, sleep, writeFile } from "./utils";
 
-const capturesPath = join(`${process.env.APPDATA}`, "Ring", "captures");
+const capturesPath = join(APP_PATH, "captures");
 if (!existsSync(capturesPath))
     mkdirSync(capturesPath, { recursive: true });
 
@@ -48,7 +48,7 @@ export const saveVideo = async (camera: RingCamera, cameraEvent: CameraEvent, di
 };
 
 const ensureCaptureFolderExists = (): string => {
-    const capturesPath = join(`${process.env.APPDATA}`, "Ring", "captures", getDateForFolder(false), getDateForFolder(true));
+    const capturesPath = join(APP_PATH, "captures", getDateForFolder(false), getDateForFolder(true));
     if (!existsSync(capturesPath))
         mkdirSync(capturesPath, { recursive: true });
     return capturesPath;
