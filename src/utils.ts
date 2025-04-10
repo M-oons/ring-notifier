@@ -38,24 +38,13 @@ export const appendFile = (path: string, content: string): void => {
     catch { }
 };
 
-export const openExplorer = (path: string): void => {
-    let command = "";
-    switch (type()) {
-        case "Windows_NT":
-            command = "explorer";
-            path ||= "=";
-            break;
+export const openExplorer = (path: string, select: boolean = false): void => {
+    path ||= "=";
 
-        case "Darwin":
-            command = "open";
-            path ||= "/";
-            break;
+    if (select)
+        path = `/select,${path}`;
 
-        default:
-            return;
-    }
-
-    const p = spawn(command, [path]);
+    const p = spawn("explorer", [path]);
     p.on("error", () => {
         p.kill();
     });
