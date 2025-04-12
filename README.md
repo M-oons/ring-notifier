@@ -3,10 +3,13 @@
 ## Build
 ```sh
 npm install
-npm run build
+make
+
+# out\make\squirrel.windows\x64\
+# out\ring-notifier-win32-x64\
 ```
 
-## Run
+## Run locally
 ```sh
-node dist/index.js
+make run
 ```

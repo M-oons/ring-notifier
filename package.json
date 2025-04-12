@@ -3,21 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "postbuild": "copyfiles -u 1 src/assets/* dist"
-  },
+  "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "Moons",
   "license": "ISC",
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
     "node-notifier": "^10.0.1",
-    "ring-client-api": "^13.2.1",
-    "systray": "^1.0.5",
-    "typescript": "^5.8.2"
+    "ring-client-api": "^13.2.1"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.0",
+    "@electron-forge/maker-squirrel": "^7.8.0",
+    "@electron/fuses": "^1.8.0",
     "@types/node-notifier": "^8.0.5",
-    "copyfiles": "^2.4.1"
+    "electron": "^35.1.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }

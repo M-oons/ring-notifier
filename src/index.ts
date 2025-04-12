@@ -1,58 +1,57 @@
+import { app, Menu, Tray } from "electron";
+
+if (require("electron-squirrel-startup"))
+    app.quit();
+
 import { join } from "path";
-import { existsSync, mkdirSync, readFileSync } from "fs";
-import { APP_PATH } from "./utils";
+import { existsSync, mkdirSync } from "fs";
+import { APP_PATH, sleep } from "./utils";
 
 if (!existsSync(APP_PATH))
     mkdirSync(APP_PATH, { recursive: true });
 
 import { RingApi } from "ring-client-api";
-import SysTray from "systray";
 import { readRefreshToken } from "./auth";
 import config from "./config";
 import { handleNotification, handleRefreshTokenUpdate } from "./handlers";
-import { log, openExplorer } from "./utils";
+import { ASSETS_PATH, log, openExplorer } from "./utils";
+import { notify } from "./notifications";
 
-const tray = new SysTray({
-    menu: {
-        icon: readFileSync(join(__dirname, "assets", "icon.ico")).toString("base64"),
-        title: "Ring Notifier",
-        tooltip: "Ring Notifier",
-        items: [
-            {
-                title: "Ring Notifier",
-                tooltip: "Ring Notifier",
-                enabled: false,
-                checked: false,
+let tray: Tray | null = null;
+
+app.on("ready", async () => {
+    tray = new Tray(join(ASSETS_PATH, "icon.png"));
+
+    const menu = Menu.buildFromTemplate([
+        {
+            label: "Ring Notifier",
+            type: "normal",
+            enabled: false,
+        },
+        { type: "separator" },
+        {
+            label: "Open captures folder",
+            type: "normal",
+            click: () => {
+                openExplorer(join(APP_PATH, "captures"));
             },
-            {
-                title: "Open captures folder",
-                tooltip: "Open captures folder",
-                enabled: true,
-                checked: false,
+        },
+        { type: "separator" },
+        {
+            label: "Quit",
+            type: "normal",
+            click: () => {
+                app.quit();
             },
-            {
-                title: "Quit",
-                tooltip: "Quit",
-                enabled: true,
-                checked: false,
-            }
-        ],
-    },
+        },
+    ]);
+    tray.setContextMenu(menu);
+    tray.setToolTip("Ring Notifier");
+
+    await run();
 });
 
-tray.onClick(action => {
-    switch (action.seq_id) {
-        case 1: // open captures folder
-            openExplorer(join(APP_PATH, "captures"));
-            return;
-
-        case 2: // quit
-            tray.kill();
-            return;
-    }
-});
-
-tray.onReady(async () => {
+const run = async () => {
     const ring = new RingApi({
         refreshToken: readRefreshToken(),
         cameraStatusPollingSeconds: config.cameraPollingInterval,
@@ -73,6 +72,7 @@ tray.onReady(async () => {
 
         for (const camera of cameras) {
             camera.onNewNotification.subscribe(ding => handleNotification(camera, ding));
+            notify(camera, "motion", null);
         }
     }
-});
+};

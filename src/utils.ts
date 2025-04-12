@@ -1,15 +1,18 @@
 import { spawn } from "child_process";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { type } from "os";
 import { join } from "path";
 import { type RingCamera } from "ring-client-api";
 
 export const APP_PATH = join(`${process.env.APPDATA}`, "ring-notifier");
 
+export const ASSETS_PATH = process.env.NODE_ENV === "development"
+    ? join(__dirname, "assets")
+    : join(process.resourcesPath, "assets");
+
 export const log = (text: string, ...camera: RingCamera[]): void => {
     let message = `${getTimestamp()} `;
     if (camera.length)
-        message += `[${camera[0].name}] `;
+        message += `[${camera[0]!.name}] `;
     message += text;
     console.log(message);
     const logsFolder = ensureLogsFolderExists();
