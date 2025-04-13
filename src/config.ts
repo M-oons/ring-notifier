@@ -2,6 +2,8 @@ import { join } from "path";
 import { type Config } from "./types";
 import { APP_PATH, readFile, writeFile } from "./utils";
 
+const configPath = join(APP_PATH, "config.json");
+
 const defaultConfig: Config = {
     cameraPollingInterval: 2,
     notifications: {
@@ -14,6 +16,20 @@ const defaultConfig: Config = {
             sound: true,
         },
     }
+};
+
+let config: Config = defaultConfig;
+
+export const getConfig = (): Config => {
+    return config;
+};
+
+export const updateConfig = (updated: Partial<Config>): void => {
+    config = {
+        ...config,
+        ...updated,
+    };
+    writeConfig(config);
 };
 
 const parseConfig = (config: Config): Config => {
@@ -42,9 +58,9 @@ const parseConfig = (config: Config): Config => {
     };
 };
 
-const configPath = join(APP_PATH, "config.json");
-
-let config: Config = defaultConfig;
+const writeConfig = (config: Config): void => {
+    writeFile(configPath, JSON.stringify(config, null, 4));
+};
 
 const json = readFile(configPath);
 if (json) {
@@ -52,7 +68,5 @@ if (json) {
     config = parseConfig(parsedConfig);
 }
 else {
-    writeFile(configPath, JSON.stringify(config, null, 4));
+    writeConfig(config);
 }
-
-export default config;

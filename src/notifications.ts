@@ -2,7 +2,7 @@ import { exec } from "child_process";
 import { join } from "path";
 import { WindowsToaster } from "node-notifier";
 import { type RingCamera } from "ring-client-api";
-import config from "./config";
+import { getConfig } from "./config";
 import { type CameraEvent } from "./types";
 import { ASSETS_PATH, openExplorer } from "./utils";
 
@@ -11,16 +11,16 @@ const toaster = new WindowsToaster();
 export const notify = (camera: RingCamera, cameraEvent: CameraEvent, snapshotPath: string | null): void => {
     switch (cameraEvent) {
         case "motion":
-            if (config.notifications.motion.toast)
+            if (getConfig().notifications.motion.toast)
                 showNotification("👀 Motion detected", `Motion detected at "${camera.name}"`, snapshotPath);
-            if (config.notifications.motion.sound)
+            if (getConfig().notifications.motion.sound)
                 playSound(join(ASSETS_PATH, "motion.wav"));
             return;
 
         case "ring":
-            if (config.notifications.ring.toast)
+            if (getConfig().notifications.ring.toast)
                 showNotification("🔔 Doorbell ring", `Doorbell ring at "${camera.name}"`, snapshotPath);
-            if (config.notifications.ring.sound)
+            if (getConfig().notifications.ring.sound)
                 playSound(join(ASSETS_PATH, "ring.wav"));
             return;
     }
