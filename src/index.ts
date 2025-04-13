@@ -5,7 +5,7 @@ if (require("electron-squirrel-startup"))
 
 import { join } from "path";
 import { existsSync, mkdirSync } from "fs";
-import { APP_PATH, sleep } from "./utils";
+import { APP_PATH } from "./utils";
 
 if (!existsSync(APP_PATH))
     mkdirSync(APP_PATH, { recursive: true });
@@ -15,7 +15,6 @@ import { readRefreshToken } from "./auth";
 import config from "./config";
 import { handleNotification, handleRefreshTokenUpdate } from "./handlers";
 import { ASSETS_PATH, log, openExplorer } from "./utils";
-import { notify } from "./notifications";
 
 let tray: Tray | null = null;
 
@@ -72,7 +71,6 @@ const run = async () => {
 
         for (const camera of cameras) {
             camera.onNewNotification.subscribe(ding => handleNotification(camera, ding));
-            notify(camera, "motion", null);
         }
     }
 };
